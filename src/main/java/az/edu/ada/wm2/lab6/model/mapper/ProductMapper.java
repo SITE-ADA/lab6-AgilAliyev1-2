@@ -4,27 +4,36 @@ import az.edu.ada.wm2.lab6.model.Category;
 import az.edu.ada.wm2.lab6.model.Product;
 import az.edu.ada.wm2.lab6.model.dto.ProductRequestDto;
 import az.edu.ada.wm2.lab6.model.dto.ProductResponseDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public interface ProductMapper {
+@Component
+public class ProductMapper {
 
-    // Entity → Response DTO
-    @Mapping(target = "categoryNames", source = "categories")
-    ProductResponseDto toResponseDto(Product product);
+    public ProductResponseDto toResponseDto(Product product) {
+        ProductResponseDto dto = new ProductResponseDto();
+        dto.setId(product.getId());
+        dto.setProductName(product.getProductName());
+        dto.setPrice(product.getPrice());
+        dto.setExpirationDate(product.getExpirationDate());
+        dto.setCategoryNames(mapCategoriesToNames(product.getCategories()));
+        return dto;
+    }
 
-    // Request DTO → Entity (without categories!)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "categories", ignore = true)
-    Product toEntity(ProductRequestDto dto);
+    public Product toEntity(ProductRequestDto dto) {
+        Product product = new Product();
+        product.setProductName(dto.getProductName());
+        product.setPrice(dto.getPrice());
+        product.setExpirationDate(dto.getExpirationDate());
+        return product;
+    }
 
-    // Custom mapping: Set<Category> → List<String>
-    default List<String> mapCategoriesToNames(Set<Category> categories) {
+    private List<String> mapCategoriesToNames(Set<Category> categories) {
         return categories.stream()
                 .map(Category::getName)
-                .toList();
+                .collect(Collectors.toList());
     }
 }
