@@ -2,8 +2,9 @@ package az.edu.ada.wm2.lab6.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "products")
 public class Category {
 
     @Id
@@ -22,5 +24,6 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
-    private Set<Product> products = new HashSet<>();
+    @Builder.Default
+    private List<Product> products = new ArrayList<>();
 }
